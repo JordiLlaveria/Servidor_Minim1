@@ -42,7 +42,7 @@ public class ProductsService {
         List<Producto> productos = this.tm.findAll();
 
         GenericEntity<List<Producto>> entity = new GenericEntity<List<Producto>>(productos) {};
-        return Response.status(201).entity(entity).build()  ;
+        return Response.status(201).entity(entity).build();
 
     }
 

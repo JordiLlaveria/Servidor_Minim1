@@ -9,9 +9,7 @@ public class Producto {
     double ventas;
     static int lastId;
 
-    public Producto() {
-        this.nombre = RandomUtils.getId();
-    }
+    public Producto(){}
 
     public Producto(String nombre, Double precio, Double ventas) {
         this();
