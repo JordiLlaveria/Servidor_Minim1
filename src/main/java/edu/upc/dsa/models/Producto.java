@@ -11,7 +11,7 @@ public class Producto {
 
     public Producto(){}
 
-    public Producto(String nombre, Double precio, Double ventas) {
+    public Producto(String nombre, double precio, double ventas) {
         this();
         this.setNombre(nombre);
         this.setVentas(ventas);
@@ -30,7 +30,7 @@ public class Producto {
         return precio;
     }
 
-    public void setPrecio(Double precio) {
+    public void setPrecio(double precio) {
         this.precio = precio;
     }
 
@@ -38,7 +38,7 @@ public class Producto {
         return ventas;
     }
 
-    public void setVentas(Double ventas) {
+    public void setVentas(double ventas) {
         this.ventas = ventas;
     }
 
