@@ -2,7 +2,7 @@ package edu.upc.dsa.models;
 
 import edu.upc.dsa.util.RandomUtils;
 
-public class Producto {
+public class Producto implements Comparable<Producto>{
 
     String nombre;
     double precio;
@@ -11,10 +11,9 @@ public class Producto {
 
     public Producto(){}
 
-    public Producto(String nombre, double precio, double ventas) {
+    public Producto(String nombre, double precio) {
         this();
         this.setNombre(nombre);
-        this.setVentas(ventas);
         this.setPrecio(precio);
     }
 
@@ -42,9 +41,14 @@ public class Producto {
         this.ventas = ventas;
     }
 
-    @Override
-    public String toString() {
-        return "Producto[id="+ nombre +", precio=" + precio + ", ventas=" + ventas +"]";
+    public void ventaRealizada(int numero){
+        this.ventas = this.ventas + numero;
+    }
+
+    public int compareTo(Producto a)
+    {
+        int res = (int) (this.getPrecio()-a.getPrecio());
+        return res;
     }
 
 }

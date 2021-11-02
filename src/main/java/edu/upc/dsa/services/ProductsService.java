@@ -1,7 +1,6 @@
 package edu.upc.dsa.services;
 
-import edu.upc.dsa.ProductoManager;
-import edu.upc.dsa.ProductoManagerImpl;
+import edu.upc.dsa.*;
 import edu.upc.dsa.models.Producto;
 import io.swagger.annotations.Api;
 import io.swagger.annotations.ApiOperation;
@@ -12,53 +11,110 @@ import javax.ws.rs.*;
 import javax.ws.rs.core.GenericEntity;
 import javax.ws.rs.core.MediaType;
 import javax.ws.rs.core.Response;
+import java.util.LinkedList;
 import java.util.List;
 
 @Api(value = "/product", description = "Endpoint to Track Service")
 @Path("/product")
-public class ProductsService {
+public class ProductsService extends EmptyList{
+    private Manager tm;
+        public ProductsService() throws EmptyList {
+            this.tm = ManagerImpl.getInstance();
+            if (this.tm.size()==0){
+                this.tm.añadirUsuario(new Usuari("Jordi","1"));
+                this.tm.añadirUsuario(new Usuari("Joana","2"));
 
-    private ProductoManager tm;
+                Producto cafe = new Producto("Cafe",0.8);
+                Producto cheese_cake = new Producto("Cheese Cake",2.5);
+                Producto croissant = new Producto("Croissant",1.2);
+                Producto donut = new Producto("Donut",1.1);
+                this.tm.añadirProductoLista(cafe);
+                this.tm.añadirProductoLista(cheese_cake);
+                this.tm.añadirProductoLista(croissant);
+                this.tm.añadirProductoLista(donut);
 
-    public ProductsService() {
-        this.tm = ProductoManagerImpl.getInstance();
-        if (tm.size()==0) {
-            this.tm.addProducto("Cafe",0.8, 1.0);
-            this.tm.addProducto("Cheese Cake",2.5, 1.0);
-            this.tm.addProducto("Croissant",1.2, 1.0);
-        }
+                Comanda comanda = new Comanda("1");
+                comanda.addLP(2,cafe);
+                comanda.addLP(1,donut);
+                this.tm.realizarPedido(comanda);
+            }
     }
-
+    /*
     @GET
-    @ApiOperation(value = "get all Products", notes = "asdasd")
+    @ApiOperation(value = "realizar pedido", notes = "asdasd")
     @ApiResponses(value = {
             @ApiResponse(code = 201, message = "Successful", response = Producto.class, responseContainer="List"),
     })
     @Path("/")
     @Produces(MediaType.APPLICATION_JSON)
-    public Response loadProducts() {
+    public Response realizarPedido(Usuari usuario, Producto producto) {
+        //Comanda comanda = new Comanda(usuario.getUsuariID());
+        //comanda.addLP(2, donut);
+        //comanda.addLP(1, cafe);
+        //comanda.addLP(4,croissant);
 
-        List<Producto> productos = this.tm.findAll();
+        //manager.getInstance().realizarPedido(comanda);
+        //List<Producto> productos = this.tm.findAll();
 
-        GenericEntity<List<Producto>> entity = new GenericEntity<List<Producto>>(productos) {};
+        GenericEntity<Producto> entity = new GenericEntity<Producto>(cafe) {};
         return Response.status(201).entity(entity).build();
 
     }
-
+    */
     @GET
-    @ApiOperation(value = "get a Product", notes = "asdasd")
+    @ApiOperation(value = "get Productos Ordenados Precio", notes = "asdasd")
     @ApiResponses(value = {
-            @ApiResponse(code = 201, message = "Successful", response = Producto.class),
-            @ApiResponse(code = 404, message = "Product not found")
+            @ApiResponse(code = 201, message = "Successful", response = Producto.class, responseContainer="List"),
     })
-    @Path("/{nombre}")
+    @Path("/ordenados_precio")
     @Produces(MediaType.APPLICATION_JSON)
-    public Response getProduct(@PathParam("nombre") String nombre) {
-        Producto t = this.tm.getProducto(nombre);
-        if (t == null) return Response.status(404).build();
-        else  return Response.status(201).entity(t).build();
-    }
+    public Response getProductosOrdenadosPrecio() throws EmptyList {
 
+        List<Producto> productos = this.tm.ordenarProductosPrecio();
+
+        GenericEntity<List<Producto>> entity = new GenericEntity<List<Producto>>(productos) {};
+        return Response.status(201).entity(entity).build()  ;
+    }
+    @GET
+    @ApiOperation(value = "get Comandes User", notes = "asdasd")
+    @ApiResponses(value = {
+            @ApiResponse(code = 201, message = "Successful", response = Comanda.class, responseContainer="List"),
+            @ApiResponse(code = 404, message = "Comanda not found")
+    })
+    @Path("/{id_usuari}")
+    @Produces(MediaType.APPLICATION_JSON)
+    public Response getComandesUser(@PathParam("id_usuari") String idusuari) {
+        List<Comanda> comandas_user = tm.listadoPedidosUser(idusuari);
+        GenericEntity<List<Comanda>> entity = new GenericEntity<List<Comanda>>(comandas_user) {};
+        return Response.status(201).entity(entity).build();
+    }
+    @GET
+    @ApiOperation(value = "get Productos Ordenados Ventas", notes = "asdasd")
+    @ApiResponses(value = {
+            @ApiResponse(code = 201, message = "Successful", response = Producto.class, responseContainer="List"),
+    })
+    @Path("/ordenados_ventas")
+    @Produces(MediaType.APPLICATION_JSON)
+    public Response getProductosOrdenadosVentas() throws EmptyList {
+
+        List<Producto> ventas = this.tm.ordenarProductosVentas();
+
+        GenericEntity<List<Producto>> entity = new GenericEntity<List<Producto>>(ventas) {};
+        return Response.status(201).entity(entity).build()  ;
+    }
+    @GET
+    @ApiOperation(value = "servir pedido", notes = "asdasd")
+    @ApiResponses(value = {
+            @ApiResponse(code = 201, message = "Successful", response = Comanda.class),
+            @ApiResponse(code = 404, message = "Track not found")
+    })
+    @Path("/servir pedido")
+    @Produces(MediaType.APPLICATION_JSON)
+    public Response getTrack() {
+        this.tm.servirPedido();
+        return Response.status(404).build();
+    }
+    /*
     @DELETE
     @ApiOperation(value = "delete a Product", notes = "asdasd")
     @ApiResponses(value = {
@@ -104,5 +160,6 @@ public class ProductsService {
         this.tm.addProducto(producto);
         return Response.status(201).entity(producto).build();
     }
+    */
 
 }
