@@ -18,6 +18,7 @@ public class ManagerImpl implements Manager {
         return instance;
     }
 
+    final static Logger logger = Logger.getLogger(ManagerImpl.class);
     private Queue<Comanda> misComandas = new LinkedList<Comanda>();
     private List<Producto> listaProductos = new LinkedList<Producto>();
     private Hashtable<String, Usuari> usuaris = new Hashtable<String, Usuari>();
@@ -36,7 +37,9 @@ public class ManagerImpl implements Manager {
     }
 
     public void realizarPedido(Comanda comanda) {
+
         this.misComandas.add(comanda);
+        logger.info("Pedido realizado");
     }
 
     @Override
@@ -77,6 +80,11 @@ public class ManagerImpl implements Manager {
     @Override
     public int size() {
         return listaProductos.size();
+    }
+
+    @Override
+    public int getSizePedidos() {
+        return misComandas.size();
     }
 
     public double getSizeProductos(){ return listaProductos.size();}

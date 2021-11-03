@@ -1,5 +1,7 @@
 package edu.upc.dsa.services;
 
+import com.google.gson.Gson;
+import com.google.gson.GsonBuilder;
 import edu.upc.dsa.*;
 import edu.upc.dsa.models.Producto;
 import io.swagger.annotations.Api;
@@ -7,6 +9,7 @@ import io.swagger.annotations.ApiOperation;
 import io.swagger.annotations.ApiResponse;
 import io.swagger.annotations.ApiResponses;
 
+import javax.swing.text.Element;
 import javax.ws.rs.*;
 import javax.ws.rs.core.GenericEntity;
 import javax.ws.rs.core.MediaType;
@@ -27,13 +30,13 @@ public class ProductsService extends EmptyList{
                 Producto cafe = new Producto("Cafe",0.8);
                 Producto cheese_cake = new Producto("Cheese Cake",2.5);
                 Producto croissant = new Producto("Croissant",1.2);
-                Producto donut = new Producto("Donut",1.1);
+                Producto donut = new Producto("Donut",1.4);
                 this.tm.añadirProductoLista(cafe);
                 this.tm.añadirProductoLista(cheese_cake);
                 this.tm.añadirProductoLista(croissant);
                 this.tm.añadirProductoLista(donut);
 
-                Comanda comanda = new Comanda("1");
+                Comanda comanda = new Comanda("2");
                 comanda.addLP(2,cafe);
                 comanda.addLP(1,donut);
                 this.tm.realizarPedido(comanda);
@@ -66,7 +69,7 @@ public class ProductsService extends EmptyList{
     @ApiResponses(value = {
             @ApiResponse(code = 201, message = "Successful", response = Producto.class, responseContainer="List"),
     })
-    @Path("/ordenados_precio")
+    @Path("/ordenats_preu")
     @Produces(MediaType.APPLICATION_JSON)
     public Response getProductosOrdenadosPrecio() throws EmptyList {
 
@@ -75,10 +78,11 @@ public class ProductsService extends EmptyList{
         GenericEntity<List<Producto>> entity = new GenericEntity<List<Producto>>(productos) {};
         return Response.status(201).entity(entity).build()  ;
     }
+
     @GET
     @ApiOperation(value = "get Comandes User", notes = "asdasd")
     @ApiResponses(value = {
-            @ApiResponse(code = 201, message = "Successful", response = Comanda.class, responseContainer="List"),
+            @ApiResponse(code = 201, message = "Successful", response = Comanda.class),
             @ApiResponse(code = 404, message = "Comanda not found")
     })
     @Path("/{id_usuari}")
@@ -86,14 +90,16 @@ public class ProductsService extends EmptyList{
     public Response getComandesUser(@PathParam("id_usuari") String idusuari) {
         List<Comanda> comandas_user = tm.listadoPedidosUser(idusuari);
         GenericEntity<List<Comanda>> entity = new GenericEntity<List<Comanda>>(comandas_user) {};
-        return Response.status(201).entity(entity).build();
+        Gson jsonConverter = new GsonBuilder().create();
+        return Response.status(201).entity(jsonConverter.toJson(comandas_user)).build();
     }
+
     @GET
     @ApiOperation(value = "get Productos Ordenados Ventas", notes = "asdasd")
     @ApiResponses(value = {
             @ApiResponse(code = 201, message = "Successful", response = Producto.class, responseContainer="List"),
     })
-    @Path("/ordenados_ventas")
+    @Path("/ordenats_ventas")
     @Produces(MediaType.APPLICATION_JSON)
     public Response getProductosOrdenadosVentas() throws EmptyList {
 
@@ -103,63 +109,37 @@ public class ProductsService extends EmptyList{
         return Response.status(201).entity(entity).build()  ;
     }
     @GET
-    @ApiOperation(value = "servir pedido", notes = "asdasd")
+    @ApiOperation(value = "Servir Comanda", notes = "asdasd")
     @ApiResponses(value = {
             @ApiResponse(code = 201, message = "Successful", response = Comanda.class),
-            @ApiResponse(code = 404, message = "Track not found")
+            @ApiResponse(code = 404, message = "La comanda no pot ser servida perquè no existeix")
     })
-    @Path("/servir pedido")
+    @Path("/servir_comanda")
     @Produces(MediaType.APPLICATION_JSON)
-    public Response getTrack() {
-        this.tm.servirPedido();
-        return Response.status(404).build();
+    public Response servirPedido() {
+        if (this.tm.getSizePedidos()!=0) {
+            this.tm.servirPedido();
+            return Response.status(201).build();
+        }
+        else{
+            return Response.status(404).build();
+        }
     }
-    /*
-    @DELETE
-    @ApiOperation(value = "delete a Product", notes = "asdasd")
-    @ApiResponses(value = {
-            @ApiResponse(code = 201, message = "Successful"),
-            @ApiResponse(code = 404, message = "Track not found")
-    })
-    @Path("/{nombre}")
-    public Response deleteTrack(@PathParam("nombre") String nombre) {
-        Producto t = this.tm.getProducto(nombre);
-        if (t == null) return Response.status(404).build();
-        else this.tm.deleteProducto(nombre);
-        return Response.status(201).build();
-    }
-
-    @PUT
-    @ApiOperation(value = "update a Product", notes = "asdasd")
-    @ApiResponses(value = {
-            @ApiResponse(code = 201, message = "Successful"),
-            @ApiResponse(code = 404, message = "Track not found")
-    })
-    @Path("/")
-    public Response updateProduct(Producto producto) {
-
-        Producto t = this.tm.updateProducto(producto);
-
-        if (t == null) return Response.status(404).build();
-
-        return Response.status(201).build();
-    }
-
     @POST
-    @ApiOperation(value = "create a new Product", notes = "asdasd")
+    @ApiOperation(value = "Realitzar comanda", notes = "asdasd")
     @ApiResponses(value = {
-            @ApiResponse(code = 201, message = "Successful", response= Producto.class),
-            @ApiResponse(code = 500, message = "Validation Error")
-
+            @ApiResponse(code = 201, message = "Successful", response = Comanda.class),
+            @ApiResponse(code = 404, message = "Comanda couldn't be done")
     })
-    @Path("/")
-    @Consumes(MediaType.APPLICATION_JSON)
-    public Response newProduct(Producto producto) {
-
-        if (producto.getVentas()==0 || producto.getPrecio()==0)  return Response.status(500).entity(producto).build();
-        this.tm.addProducto(producto);
-        return Response.status(201).entity(producto).build();
+    @Path("/realitzar_comanda")
+    @Produces(MediaType.APPLICATION_JSON)
+    public Response realizarPedido(Comanda comanda) {
+        if (comanda.getUsuariID()!=null || comanda.getLlistaCompra() != null){
+            this.tm.realizarPedido(comanda);
+            return Response.status(201).entity(comanda).build();
+        }
+        else{
+            return Response.status(404).entity(comanda).build();
+        }
     }
-    */
-
 }

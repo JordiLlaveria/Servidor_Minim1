@@ -14,5 +14,6 @@ public interface Manager {
     public void añadirUsuario(Usuari usuari);
 
     public int size();
+    public int getSizePedidos();
 
 }
