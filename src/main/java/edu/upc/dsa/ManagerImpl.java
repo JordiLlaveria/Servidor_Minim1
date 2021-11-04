@@ -29,6 +29,7 @@ public class ManagerImpl implements Manager {
     }
     public int GetNumProductos() { return listaProductos.size();}
     public int GetNumUsuarios(){ return usuaris.size();}
+    public Producto GetProducteMesEconomic() {return listaProductos.get(0);}
 
     public List<Producto> ordenarProductosPrecio(){
         List<Producto> listaOrdenada = this.listaProductos;

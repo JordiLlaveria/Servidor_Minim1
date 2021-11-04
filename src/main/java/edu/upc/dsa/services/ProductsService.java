@@ -24,6 +24,7 @@ public class ProductsService extends EmptyList{
         public ProductsService() throws EmptyList {
             this.tm = ManagerImpl.getInstance();
             if (this.tm.size()==0){
+
                 this.tm.añadirUsuario(new Usuari("Jordi","1"));
                 this.tm.añadirUsuario(new Usuari("Joana","2"));
 
@@ -40,30 +41,10 @@ public class ProductsService extends EmptyList{
                 comanda.addLP(2,cafe);
                 comanda.addLP(1,donut);
                 this.tm.realizarPedido(comanda);
+                this.tm.servirPedido();
             }
     }
-    /*
-    @GET
-    @ApiOperation(value = "realizar pedido", notes = "asdasd")
-    @ApiResponses(value = {
-            @ApiResponse(code = 201, message = "Successful", response = Producto.class, responseContainer="List"),
-    })
-    @Path("/")
-    @Produces(MediaType.APPLICATION_JSON)
-    public Response realizarPedido(Usuari usuario, Producto producto) {
-        //Comanda comanda = new Comanda(usuario.getUsuariID());
-        //comanda.addLP(2, donut);
-        //comanda.addLP(1, cafe);
-        //comanda.addLP(4,croissant);
 
-        //manager.getInstance().realizarPedido(comanda);
-        //List<Producto> productos = this.tm.findAll();
-
-        GenericEntity<Producto> entity = new GenericEntity<Producto>(cafe) {};
-        return Response.status(201).entity(entity).build();
-
-    }
-    */
     @GET
     @ApiOperation(value = "get Productos Ordenados Precio", notes = "asdasd")
     @ApiResponses(value = {
@@ -90,8 +71,7 @@ public class ProductsService extends EmptyList{
     public Response getComandesUser(@PathParam("id_usuari") String idusuari) {
         List<Comanda> comandas_user = tm.listadoPedidosUser(idusuari);
         GenericEntity<List<Comanda>> entity = new GenericEntity<List<Comanda>>(comandas_user) {};
-        Gson jsonConverter = new GsonBuilder().create();
-        return Response.status(201).entity(jsonConverter.toJson(comandas_user)).build();
+        return Response.status(201).entity(entity).build();
     }
 
     @GET

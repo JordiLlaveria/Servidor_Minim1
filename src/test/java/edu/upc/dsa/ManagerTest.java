@@ -132,7 +132,9 @@ public class ManagerTest {
         misProductos.add(cafe);
         misProductos.add(croissant);
         misProductos.add(cheesecake);
-        Assert.assertEquals(manager.getInstance().ordenarProductosPrecio(), misProductos);
+        misProductos.add(sucdetaronja);
+        misProductos.add(donut);
+        Assert.assertEquals(manager.getInstance().GetProducteMesEconomic().getPrecio(),cafe.getPrecio(),0);
     }
     @Test
     public void ProbaOrdenarProductosVentas() {
