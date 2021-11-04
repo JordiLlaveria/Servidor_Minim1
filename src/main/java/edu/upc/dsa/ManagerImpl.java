@@ -18,7 +18,10 @@ public class ManagerImpl implements Manager {
         return instance;
     }
 
+    //Implementació Log4j
     final static Logger logger = Logger.getLogger(ManagerImpl.class);
+    //logger.info("");
+
     private Queue<Comanda> misComandas = new LinkedList<Comanda>();
     private List<Producto> listaProductos = new LinkedList<Producto>();
     private Hashtable<String, Usuari> usuaris = new Hashtable<String, Usuari>();
@@ -62,6 +65,7 @@ public class ManagerImpl implements Manager {
     public List<Comanda> listadoPedidosUser(String usuariID) {
         return this.usuaris.get(usuariID).getLlistaComandesServides();
     }
+
     @Override
     public List<Producto> ordenarProductosVentas(){
         List<Producto> listaOrdenada = this.listaProductos;

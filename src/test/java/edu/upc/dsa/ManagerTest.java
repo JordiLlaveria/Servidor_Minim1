@@ -18,9 +18,8 @@ public class ManagerTest {
         //Declarat null per fer us del Singleton
         manager = null;
 
-        manager.getInstance().añadirUsuario(new Usuari("Joana","22222222X"));
+        manager.getInstance().añadirUsuario(new Usuari("Joana","11111111Z"));
         manager.getInstance().añadirUsuario(new Usuari("Jordi","33333333Y"));
-        manager.getInstance().añadirUsuario(new Usuari("Aida","11111111Z"));
 
         Producto cafe = new Producto("Cafe",0.8);
         Producto cheesecake = new Producto("Cheese Cake",2.5);
@@ -115,55 +114,41 @@ public class ManagerTest {
         Assert.assertEquals(manager.getInstance().GetNumComandes(), 0);
     }
     @Test
-    public void ProbaListadoPedidosUser() {
+    public void ProbaListadoPedidosUser(){
+        manager.getInstance().servirPedido();
         List<Comanda> comandas_1 = new LinkedList<>();
         Comanda miComanda = new Comanda("11111111Z");
         comandas_1.add(miComanda);
-        Assert.assertEquals(manager.getInstance().listadoPedidosUser("11111111Z"), comandas_1);
+        Assert.assertEquals(manager.getInstance().listadoPedidosUser("11111111Z").size(), comandas_1.size());
     }
     @Test
     public void ProbaOrdenarProductosPrecio() {
-        List<Producto> misProductos = new LinkedList<>();
+        List<Producto> misProductos;
         Producto cafe = new Producto("Cafe", 0.8); //1r
-        Producto cheesecake = new Producto("Cheese Cake", 2.5); //4t
-        Producto croissant = new Producto("Croissant", 1.2); //2n
-        Producto sucdetaronja = new Producto("Suc de taronja",4.1); //5e
-        Producto donut = new Producto("Donut",1.30); //3r
-        misProductos.add(cafe);
-        misProductos.add(croissant);
-        misProductos.add(cheesecake);
-        misProductos.add(sucdetaronja);
-        misProductos.add(donut);
-        Assert.assertEquals(manager.getInstance().GetProducteMesEconomic().getPrecio(),cafe.getPrecio(),0);
+        misProductos=manager.getInstance().ordenarProductosPrecio();
+        Assert.assertEquals(misProductos.get(0).getPrecio(),cafe.getPrecio(),0);
     }
     @Test
     public void ProbaOrdenarProductosVentas() {
-        Comanda miComanda = new Comanda("11111111Z");
-        Producto cafe = new Producto("Cafe", 0.8);
-        Producto cheesecake = new Producto("Cheese Cake", 2.5);
-        Producto croissant = new Producto("Croissant", 1.2);
-        miComanda.addLP(3, cafe);
-        miComanda.addLP(1, cheesecake);
-        miComanda.addLP(2, croissant);
-        List<Producto> misProductos2 = new LinkedList<>();
-        misProductos2.add(cheesecake);
-        misProductos2.add(croissant);
-        misProductos2.add(cafe);
-        Assert.assertEquals(manager.getInstance().ordenarProductosVentas(), misProductos2);
+        manager.getInstance().servirPedido();
+        List<Producto> misProductos;
+        Producto croissant = new Producto("Croissant",1.2);
+        misProductos=manager.getInstance().ordenarProductosVentas();
+        Assert.assertEquals(misProductos.get(0).getNombre(), croissant.getNombre());
     }
     @Test
     public void ProbaAñadirProductoLista(){
-        Assert.assertEquals(manager.getInstance().GetNumProductos(),0);
-        Producto cafe = new Producto("Cafe",1);
-        manager.getInstance().añadirProductoLista(cafe);
-        Assert.assertEquals(manager.getInstance().GetNumProductos(),1);
+        Assert.assertEquals(manager.getInstance().GetNumProductos(),5);
+        Producto magdalena = new Producto("Magdalena",1);
+        manager.getInstance().añadirProductoLista(magdalena);
+        Assert.assertEquals(manager.getInstance().GetNumProductos(),6);
     }
     @Test
     public void ProbaAñadirUsuario(){
-        Assert.assertEquals(manager.getInstance().GetNumUsuarios(),0);
+        Assert.assertEquals(manager.getInstance().GetNumUsuarios(),2);
         Usuari Aida = new Usuari("Aida","11111111T");
         manager.getInstance().añadirUsuario(Aida);
-        Assert.assertEquals(manager.getInstance().GetNumUsuarios(),1);
+        Assert.assertEquals(manager.getInstance().GetNumUsuarios(),3);
     }
 
 }

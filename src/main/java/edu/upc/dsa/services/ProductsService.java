@@ -26,7 +26,7 @@ public class ProductsService extends EmptyList{
             if (this.tm.size()==0){
 
                 this.tm.añadirUsuario(new Usuari("Jordi","1"));
-                this.tm.añadirUsuario(new Usuari("Joana","2"));
+                this.tm.añadirUsuario(new Usuari("Tamara","2"));
 
                 Producto cafe = new Producto("Cafe",0.8);
                 Producto cheese_cake = new Producto("Cheese Cake",2.5);
@@ -41,7 +41,6 @@ public class ProductsService extends EmptyList{
                 comanda.addLP(2,cafe);
                 comanda.addLP(1,donut);
                 this.tm.realizarPedido(comanda);
-                this.tm.servirPedido();
             }
     }
 
@@ -91,7 +90,7 @@ public class ProductsService extends EmptyList{
     @GET
     @ApiOperation(value = "Servir Comanda", notes = "asdasd")
     @ApiResponses(value = {
-            @ApiResponse(code = 201, message = "Successful", response = Comanda.class),
+            @ApiResponse(code = 201, message = "La comanda s'ha servit correctament", response = Comanda.class),
             @ApiResponse(code = 404, message = "La comanda no pot ser servida perquè no existeix")
     })
     @Path("/servir_comanda")
